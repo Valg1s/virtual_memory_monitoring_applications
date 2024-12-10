@@ -31,10 +31,14 @@ class GPUInfoService(ServicesBase):
             for i, gpu in enumerate(gpus):
                 gpu_data.append({
                     "GPU": i + 1,
-                    "gpu_id": gpu.id,
-                    "gpu_name": gpu.name,
-                    "gpu_driver": gpu.driver,
-                    "gpu_memory": self._convert_size(gpu.memoryTotal * 1024 * 1024),
+                    "Gpu Id": gpu.id,
+                    "Gpu Name": gpu.name,
+                    "Gpu Driver Version": gpu.driver,
+                    "Gpu Memory": self._convert_size(gpu.memoryTotal * 1024 * 1024),
+                    "Gpu Memory Used": self._convert_size(gpu.memoryUsed * 1024 * 1024),
+                    "Gpu Memory Free": self._convert_size(gpu.memoryFree * 1024 * 1024),
+                    "Gpu Load": f"{gpu.load * 100}%",
+                    "Gpu Temperature": gpu.temperature,
                 })
 
         return gpu_data

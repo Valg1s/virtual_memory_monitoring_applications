@@ -1,10 +1,11 @@
+import re
 import sys
 from pathlib import Path
 import subprocess
 from functools import wraps
+from itertools import groupby
 
 import psutil
-import wmi
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
@@ -77,23 +78,66 @@ class RAMInfoService(ServicesBase):
             return data
         return wrapper
 
-    @formate_ram_data
-    def __get_windows_ram_info(self):
-        ram_info = []
-        w = wmi.WMI()
+    def __parse_windows_ram(self, raw_data):
+        """ Parse stripped PowerShell output into structured RAM details. """
+        # Filter out empty lines
+        filtered_data = [line.strip() for line in raw_data if line.strip()]
 
-        for memory in w.Win32_PhysicalMemory():
-            ram_info.append({
-                "Manufacturer": memory.Manufacturer,
-                "Capacity": int(memory.Capacity) // (1024 ** 3),  # Convert to GB
-                "MemoryType": memory.MemoryType,
-                "Speed": memory.Speed,  # MHz
-                "FormFactor": memory.FormFactor,  # Physical form
-                "PartNumber": memory.PartNumber,
-                "DataWidth": memory.DataWidth,  # Data bus width
-                "SerialNumber": memory.SerialNumber,  # Serial number
-                "ConfiguredClockSpeed": memory.ConfiguredClockSpeed,  # Configured clock speed
-            })
+        # Group lines into chunks (one group per RAM module)
+        groups = [list(group) for is_empty, group in groupby(filtered_data, key=lambda x: x.startswith("__")) if
+                  not is_empty]
+
+        ram_info = []
+
+        for group in groups:
+            ram_details = {}
+            for line in group:
+                # Match 'Key : Value' format
+                match = re.match(r"^\s*(\w+)\s*:\s*(.*)$", line)
+                if match:
+                    key, value = match.groups()
+                    ram_details[key.strip()] = value.strip()
+            if ram_details:  # Add the module's details if it's not empty
+                ram_info.append(ram_details)
+
+        return ram_info
+
+    # Example usage
+    def __get_windows_ram_info(self):
+        """
+        Retrieves RAM information on Windows and structures it similar to Linux output.
+        """
+        ram_info = []
+        try:
+            # Fetch raw PowerShell output
+            result = subprocess.run(
+                ["powershell", "-Command", "Get-WmiObject -Class Win32_PhysicalMemory | Format-List"],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, text=True
+            )
+
+            stripped_output = result.stdout.splitlines()
+            raw_data = self.__parse_windows_ram(stripped_output)
+
+            # Structure the data to match the Linux format
+            for ram in raw_data:
+                stick_info = {
+                    "Capacity": int(ram.get("Capacity", 0)) // (1024 ** 3),  # Bytes to GB
+                    "Speed": ram.get("Speed", "").strip().replace(" MHz", ""),
+                    "Configured Clock Speed": ram.get("ConfiguredClockSpeed", "").strip().replace(" MHz", ""),
+                    "Manufacturer": ram.get("Manufacturer", "Unknown"),
+                    "Type": ram.get("MemoryType", "Unknown"),
+                    "Form Factor": int(ram.get("FormFactor", 0)),
+                    "Part Number": ram.get("PartNumber", "").strip(),
+                    "Serial Number": ram.get("SerialNumber", "").strip(),
+                    "Rank": ram.get("InterleavePosition", "Unknown"),
+                    "Voltage": ram.get("ConfiguredVoltage", "Unknown"),
+                    "Data Width": ram.get("DataWidth", "").strip(),
+                }
+                ram_info.append(stick_info)
+
+        except subprocess.CalledProcessError as e:
+            self.logger.error(f"Error retrieving RAM info: {e}")
+            return []
 
         return ram_info
 
@@ -163,3 +207,19 @@ class RAMInfoService(ServicesBase):
             result = self.__get_linux_ram_info()
 
         return result
+
+    def get_ram_usage(self):
+        max_ram_memory = psutil.virtual_memory().total
+
+        current_ram_usage = psutil.virtual_memory().used
+
+        max_virtual_memory = psutil.swap_memory().total
+
+        current_virtual_memory_usage = psutil.swap_memory().used
+
+        return {
+            "max_ram_memory": max_ram_memory,
+            "current_ram_usage": current_ram_usage,
+            "max_virtual_memory": max_virtual_memory,
+            "current_virtual_memory_usage": current_virtual_memory_usage
+        }

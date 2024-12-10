@@ -1,0 +1,255 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif; /* Set the font family */
+    font-size: 14px;                  /* Set the base font size */
+    line-height: 1.5;                 /* Set line height for readability */
+    font-weight: normal;              /* Set the default font weight */
+    color: #333;                      /* Set the default text color */
+}
+
+/* You can also apply specific styles to individual text elements like headers */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif; /* Set a different font for headers if needed */
+}
+
+header{
+    background-color: #3b4a50;
+}
+.header__inner{
+    display: flex;
+    align-items: center;
+    height: 70px;
+    justify-content: space-between;
+}
+
+.container{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.header__leftblock{
+    display: flex;
+    align-items: center;
+}
+
+.header__logo{
+    height: 50px;
+    width: 50px;
+}
+
+.header__maintitle{
+    color: #faffe5;
+}
+
+.header__x{
+    color: #26caff;
+}
+
+.header__rightblock{
+    width: 200px;
+    height: 50px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    border: #faffe5 1px solid;
+    border-radius: 15px;
+}
+
+.header__localizationlink{
+    color: #faffe5;
+    background-color: #00A5CF;
+    border-radius: 15px;
+    text-decoration: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.header__localizationlink:visited{
+    text-decoration: none;
+}
+
+.main{
+    background-color: #EAF4FA;
+    /*height: 1200px;*/
+    position: relative;
+}
+
+.main__inner{
+    display: flex;
+    width: 1200px;
+}
+
+.main__sidebar{
+    /*height: 1200px;*/
+    width: 250px;
+    border-right: #262d32 1px solid;
+    padding: 10px;
+}
+
+.main__sidebarlist{
+}
+
+.main__sidebaritem {
+    margin-bottom: 10px;
+    padding: 25px;
+    align-items: center;
+    border: #262d32 1px solid;
+    border-radius: 15px;
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.main__sidebaritem:hover {
+    background-image: linear-gradient(135deg, #00A5CF, #0D3B66);
+    color: #ffffff; /* Optional: change text color for better contrast */
+    transition: background-image 0.3s ease; /* Smooth transition */
+    cursor: pointer;
+}
+
+.main__sidebaritem.clicked {
+    background-color: #1D6A88; /* Solid color change on click */
+    color: #ffffff; /* Optional text color change */
+}
+
+.pcinfo__item.clicked {
+    background-color: #1D6A88; /* Solid color change on click */
+    color: #ffffff; /* Optional text color change */
+}
+
+.pcinfo__item:hover {
+    background-image: linear-gradient(135deg, #00A5CF, #0D3B66);
+    color: #ffffff; /* Optional: change text color for better contrast */
+    transition: background-image 0.3s ease; /* Smooth transition */
+    cursor: pointer;
+}
+
+.main__datablock{
+    width: 100%;
+}
+
+/*.main__pcinfo{*/
+/*   */
+/*}*/
+
+.pcinfo__nav{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    border-bottom: #262d32 1px solid;
+    gap: 20px;
+}
+.pcinfo__item{
+    border: #262d32 1px solid;
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-size: 20px;
+    flex-basis: auto;
+    width: 100%;
+
+}
+
+.pcinfo_block {
+    padding: 20px;
+    margin: 10px;
+    /*background-color: #faffe5; !* Light cream background for readability *!*/
+    /*border-radius: 15px;*/
+    /*border: 1px solid #262d32;*/
+    /*box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); !* Subtle shadow for depth *!*/
+    /*font-family: 'Arial', sans-serif;*/
+}
+
+.pcinfo__resultlist {
+    padding: 5px;
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between items */
+}
+
+.pcinfo__resultitem {
+    padding: 5px 10px;
+    border-radius: 15px;
+    background-color: #eaf4fa; /* Light blue background for contrast */
+    color: #262d32; /* Dark text for readability */
+    font-size: 13px;
+    line-height: 1.6; /* Increased line height for better readability */
+    transition: background-color 0.3s ease;
+}
+
+.pcinfo__resultitem:hover {
+    background-color: #00a5cf; /* Highlight on hover */
+    color: #ffffff; /* White text on hover */
+    cursor: pointer;
+}
+
+.pcinfo__resultitem:nth-child(even) {
+    background-color: #ffffff; /* Alternating background for clarity */
+}
+
+.pcinfo__resultitem:nth-child(even):hover {
+    background-color: #00a5cf; /* Highlight on hover */
+    color: #ffffff; /* White text on hover */
+    cursor: pointer;
+}
+
+.cpu__charts {
+    display: block!important ;
+}
+
+.cpu__charts canvas {
+        width: 100%; /* Or any specific width like 400px */
+        height: 300px; /* Or any specific height */
+    }
+
+

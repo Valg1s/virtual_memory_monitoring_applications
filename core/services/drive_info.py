@@ -26,13 +26,13 @@ class DriveInfoService(ServicesBase):
             partition_usage = psutil.disk_usage(partition.mountpoint)
 
             drive_info = {
-                "device": partition.device,
-                "mountpoint": partition.mountpoint,
-                "fstype": partition.fstype,
-                "total": self._convert_size(partition_usage.total),
-                "used": self._convert_size(partition_usage.used),
-                "free": self._convert_size(partition_usage.free),
-                "percent": f"{partition_usage.percent} %",
+                "Device": partition.device,
+                "Mountpoint": partition.mountpoint,
+                "FS Type": partition.fstype,
+                "Total": self._convert_size(partition_usage.total),
+                "Used": self._convert_size(partition_usage.used),
+                "Free": self._convert_size(partition_usage.free),
+                "Percent": f"{partition_usage.percent} %",
             }
             drive_data.append(drive_info)
 

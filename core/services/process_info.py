@@ -39,19 +39,23 @@ class ProcessInfoService(ServicesBase):
             "dont_have_access": []
         }
 
+        cpu_load = 0
+
         for process in psutil.process_iter(
                 ['pid', 'name', 'username', 'cpu_percent', 'memory_info', 'io_counters']):
             try:
                 p_info = process.info
                 process_type = self._classify_process(process)
+                cur_cpu_load = process.cpu_percent(interval=0.01)
+                cpu_load += cur_cpu_load
 
                 process_data = {
-                    "process_id": p_info['pid'],
-                    "process_name": p_info['name'],
-                    "cpu_usage": process.cpu_percent(interval=0.1),
-                    "ram_usage": self._convert_size(p_info['memory_info'].rss),  # в MB
-                    "virtual_memory_usage": self._convert_size(p_info['memory_info'].vms),
-                    "disk_usage": self._convert_size(process.io_counters().read_bytes + process.io_counters().write_bytes),
+                    "Process Id": p_info['pid'],
+                    "Process Name": p_info['name'],
+                    "Cpu Usage": cur_cpu_load,
+                    "Ram Usage": self._convert_size(p_info['memory_info'].rss),  # в MB
+                    "Virtual Memory Usage": self._convert_size(p_info['memory_info'].vms),
+                    "Disk Usage": self._convert_size(process.io_counters().read_bytes + process.io_counters().write_bytes),
                 }
 
                 net_usage = sum([conn.raddr.port for conn in process.net_connections() if conn.raddr])
@@ -61,5 +65,5 @@ class ProcessInfoService(ServicesBase):
 
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
-
+        print(cpu_load)
         return process_dict

@@ -1,5 +1,4 @@
 import sys
-import socket
 from pathlib import Path
 
 import psutil
@@ -36,39 +35,18 @@ class NetworkInfoService(ServicesBase):
 
     @ServicesBase.exception
     def get_network_data(self):
-        network_data = []
-
         public_ip = self.get_public_ip()
         isp_info = self.get_internet_provider(public_ip)
 
-        interfaces = psutil.net_if_addrs()
-        interface_stats = psutil.net_if_stats()
         net_io = psutil.net_io_counters(pernic=True)
+        total_bytes_sent = sum(interface.bytes_sent for interface in net_io.values())
+        total_bytes_received = sum(interface.bytes_recv for interface in net_io.values())
 
-        for interface_name, addresses in interfaces.items():
-            stats = interface_stats.get(interface_name, None)
-            io_counters = net_io.get(interface_name, None)
+        data = {
+            "ISP(Provider)": isp_info,
+            "Public Ip": public_ip,
+            "Bytes Sends": self._convert_size(total_bytes_sent),
+            "Bytes Received": self._convert_size(total_bytes_received)
+        }
 
-            data = {
-                "interface": interface_name,
-                "status": "up" if stats and stats.isup else "down",
-                "addresses": [],
-                "isp": isp_info,
-                "public_ip": public_ip,
-                "usage": {
-                    "bytes_sent": io_counters.bytes_sent if io_counters else 0,
-                    "bytes_received": io_counters.bytes_recv if io_counters else 0
-                }
-            }
-
-            for addr in addresses:
-                data["addresses"].append({
-                    "family": addr.family.name,
-                    "address": addr.address,
-                    "netmask": addr.netmask if addr.netmask else "N/A",
-                    "broadcast": addr.broadcast if addr.broadcast else "N/A"
-                })
-
-            network_data.append(data)
-
-        return network_data
+        return data

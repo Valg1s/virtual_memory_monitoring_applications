@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="header__inner">
+            <div class="header__leftblock">
+                <img class="header__logo" src="{{ url_for('static', filename='images/logo.png') }}">
+                <p class="header__maintitle">
+                    Monitor<span class="header__x">X</span>
+                </p>
+            </div>
+            <div class="header__rightblock">
+                <a class="header__localizationlink">EN</a>
+                <a class="header__localizationlink">UA</a>
+                <a class="header__localizationlink" id="separ">RU</a>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="main">
+    <div class="container">
+        <div class="main__inner">
+            <div class="main__sidebar">
+                <ol class="main__sidebarlist">
+                    <li id="pc_info_button" class="main__sidebaritem clicked">
+                        <p>PC Info</p>
+                    </li>
+                    <li id="cpu_info_button" class="main__sidebaritem">
+                        <p>CPU</p>
+                    </li>
+                    <li id="ram_info_button" class="main__sidebaritem">
+                        <p>RAM/Virtual Memory</p>
+                    </li>
+                    <li id="gpu_info_button" class="main__sidebaritem">
+                        <p>GPU</p>
+                    </li>
+                    <li id="drives_info_button" class="main__sidebaritem">
+                        <p>Drives</p>
+                    </li>
+                    <li id="network_info_button" class="main__sidebaritem">
+                        <p>Network</p>
+                    </li>
+                    <li id="processes_info_button" class="main__sidebaritem">
+                        <p>Processes</p>
+                    </li>
+                </ol>
+            </div>
+            <div class="main__datablock">
+                <div id="pc_info_block" class="main__pcinfo">
+                    <ol class="pcinfo__nav">
+                        <li class="pcinfo__item clicked">
+                            <p>CPU</p>
+                        </li>
+                        <li class="pcinfo__item">
+                            <p>RAM</p>
+                        </li>
+                        <li class="pcinfo__item">
+                            <p>GPU</p>
+                        </li>
+                        <li class="pcinfo__item">
+                            <p>Drives</p>
+                        </li>
+                        <li class="pcinfo__item">
+                            <p>Network</p>
+                        </li>
+                    </ol>
+
+                    <div class="pcinfo_block" id="pcinfo_datablock">
+                    </div>
+                </div>
+
+                <div id="cpu_block" style="display: none">
+                    <h2>CPU Data</h2>
+                    <div class="cpu__charts" style="display: block!important ">
+                        <canvas id="cpuLoadChart" width="400" height="200"></canvas>
+                        <canvas id="cpuFreqChart" width="400" height="200"></canvas>
+                    </div>
+                    <ol class="pcinfo__resultlist">
+                        <li>CPU Work Time: <p id="cpu_work_time_value">0</p></li>
+                    </ol>
+                </div>
+
+                <div id="ram_block" style="display: none">
+                    <h2>RAM Data</h2>
+                    <div class="cpu__charts" style="display: block!important ">
+                        <canvas id="ramLoadChart" width="400" height="200"></canvas>
+                        <canvas id="virtualMemoryFreqChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+<script>
+    const cpuLoadCtx = document.getElementById('cpuLoadChart').getContext('2d');
+const cpuFreqCtx = document.getElementById('cpuFreqChart').getContext('2d');
+
+const cpuLoadChart = new Chart(cpuLoadCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'CPU Load (%)',
+            data: [], // CPU load values
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            tension: 0.4 // Smoother lines
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Time' } },
+            y: { min: 0, max: 100, title: { display: true, text: 'Load (%)' } }
+        }
+    }
+});
+
+const cpuFreqChart = new Chart(cpuFreqCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'CPU Frequency (GHz)',
+            data: [], // CPU frequency values
+            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Time' } },
+            y: { min: 0, title: { display: true, text: 'Frequency (GHz)' } }
+        }
+    }
+});
+
+    const ramLoadCtx = document.getElementById('ramLoadChart').getContext('2d');
+const virtualMemoryFreqCtx = document.getElementById('virtualMemoryFreqChart').getContext('2d');
+
+const ramLoadChart = new Chart(ramLoadCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'RAM Load (GB)',
+            data: [], // CPU load values
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            tension: 0.4 // Smoother lines
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Time' } },
+            y: { min: 0, title: { display: true, text: 'Load (GB)' } }
+        }
+    }
+});
+
+const virtualMemoryFreqChart = new Chart(virtualMemoryFreqCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'Virtual Memory Usage (GB)',
+            data: [], // CPU frequency values
+            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Time' } },
+            y: { min: 0, title: { display: true, text: 'Virtual Memory Load (GB)' } }
+        }
+    }
+});
+</script>
+</html>

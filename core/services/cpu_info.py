@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from datetime import datetime, timedelta
 
 import psutil
 import cpuinfo
@@ -44,3 +45,31 @@ class CPUInfoService(ServicesBase):
             cpu_info["Maximum Frequency (GHz)"] = 'N/A'
 
         return cpu_info
+
+    def _format_cpu_usage_time(self, time):
+        time_delta = timedelta(seconds=time)
+
+        # Extract days, hours, minutes, and seconds
+        total_days = time_delta.days
+        total_seconds = time_delta.seconds
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+
+        # Format the string as "days:hours:minutes:seconds"
+        formatted_time = f"{total_days}:{hours:02}:{minutes:02}:{seconds:02}"
+
+        return formatted_time
+
+    def get_cpu_load(self):
+        cpu_freq = psutil.cpu_freq(percpu=False).current
+        cpu_load = psutil.cpu_percent(interval=3, percpu=True)
+        work_time = psutil.cpu_times().user
+
+        result_data = {
+            "cpu_freq": cpu_freq,
+            "cpu_load": max(cpu_load),
+            "work_time": self._format_cpu_usage_time(work_time),
+        }
+
+        return result_data

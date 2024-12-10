@@ -21,7 +21,7 @@ class MonitoringManager:
     def __init__(self):
         self.project_dir = str(Path(__file__).parent.parent.parent)
 
-        self.logger = init_logger(name=self.service_name, log_dir_path=os.path.join(self.project_dir, "logs"))
+        self.logger = init_logger(name=self.service_name, log_dir_path=os.path.join(self.project_dir, "logs"), rotate=True)
 
         self.cpu = cpu_service()
         self.ram = ram_service()
@@ -48,14 +48,22 @@ class MonitoringManager:
     def get_process_info(self):
         return self.process.get_process_data()
 
-    def test(self):
-        print(self.get_cpu_info())
-        print(self.get_ram_info())
-        print(self.get_gpu_info())
-        print(self.get_drives_info())
-        print(self.get_network_info())
-        print(self.get_process_info())
+    def get_cpu_load(self):
+        return self.cpu.get_cpu_load()
 
+    def get_memory_load(self):
+        return self.ram.get_ram_usage()
+
+    def test(self):
+        # print(self.get_cpu_info())
+        # print(self.get_ram_info())
+        # print(self.get_gpu_info())
+        # print(self.get_drives_info())
+        # print(self.get_network_info())
+        # print(self.get_process_info())
+
+        for _ in range(100):
+            print(self.cpu.get_cpu_load())
 
 if __name__ == '__main__':
     t = MonitoringManager()

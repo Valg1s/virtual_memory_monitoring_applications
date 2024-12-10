@@ -1,9 +1,8 @@
 import os
 import sys
+import math
 from pathlib import Path
 from functools import wraps
-
-import math
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
@@ -19,7 +18,7 @@ class ServicesBase:
     def __init__(self):
         self.project_dir = str(Path(__file__).parent.parent.parent)
 
-        self.logger = init_logger(name=self.service_name, log_dir_path=os.path.join(self.project_dir, "logs"))
+        self.logger = init_logger(name=self.service_name, log_dir_path=os.path.join(self.project_dir, "logs"), rotate=True)
 
     def exception(method):
         @wraps(method)
