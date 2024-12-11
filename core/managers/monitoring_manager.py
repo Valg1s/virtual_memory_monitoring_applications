@@ -54,6 +54,9 @@ class MonitoringManager:
     def get_memory_load(self):
         return self.ram.get_ram_usage()
 
+    def get_gpu_load(self):
+        return self.gpu.get_gpu_usage()
+
     def test(self):
         # print(self.get_cpu_info())
         # print(self.get_ram_info())

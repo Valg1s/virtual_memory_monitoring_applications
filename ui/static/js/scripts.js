@@ -159,6 +159,29 @@ function updateRamCharts(ramLoad, virtualMemoryUsage, maxRam, maxVirtualMemory) 
     virtualMemoryFreqChart.update();
 }
 
+function updateGPUCharts(gpuMaxMemory, gpuCurrentUsage, gpuTemperature) {
+    const time = new Date().toLocaleTimeString();
+
+    // Update GPU Load Chart
+    gpuLoadChart.data.labels.push(time);
+    gpuLoadChart.data.datasets[0].data.push(gpuCurrentUsage);
+    if (gpuLoadChart.data.labels.length > 10) {
+        gpuLoadChart.data.labels.shift(); // Remove oldest label
+        gpuLoadChart.data.datasets[0].data.shift(); // Remove oldest data point
+    }
+    gpuLoadChart.options.scales.y.max = gpuMaxMemory; // Set the maximum dynamically
+    gpuLoadChart.update();
+
+    // Update GPU Temperature Chart
+    gpuTempChart.data.labels.push(time);
+    gpuTempChart.data.datasets[0].data.push(gpuTemperature);
+    if (gpuTempChart.data.labels.length > 10) {
+        gpuTempChart.data.labels.shift(); // Remove oldest label
+        gpuTempChart.data.datasets[0].data.shift(); // Remove oldest data point
+    }
+    gpuTempChart.update();
+}
+
 document.getElementById('ram_info_button').addEventListener('click', () => {
     document.querySelectorAll(".main__datablock div").forEach(div => div.style.display = "none");
     const ramBlock = document.getElementById("ram_block");
@@ -202,4 +225,27 @@ document.getElementById('cpu_info_button').addEventListener('click', () => {
                 console.error("Error fetching data:", error);
             });
     }, 1000);
+});
+
+document.getElementById('gpu_info_button').addEventListener('click', () => {
+    document.querySelectorAll(".main__datablock div").forEach(div => div.style.display = "none");
+    const cpuBlock = document.getElementById("gpu_block");
+    cpuBlock.style.display = "block";
+
+    if (intervalId != null) clearInterval(intervalId);
+    intervalId = setInterval(() => {
+        axios.get(`${document.URL}get_gpu_load`)
+            .then(response => {
+                const data = response.data;
+
+                const gpu_max_memory = (data.max_memory).toFixed(2);
+                const gpu_current_usage = (data.current_memory_usage).toFixed(2);
+                const gpu_temperature = data.temperature;
+
+                updateGPUCharts(parseFloat(gpu_max_memory),parseFloat(gpu_current_usage), parseFloat(gpu_temperature));
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+    }, 1500);
 });

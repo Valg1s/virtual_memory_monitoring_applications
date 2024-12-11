@@ -42,3 +42,16 @@ class GPUInfoService(ServicesBase):
                 })
 
         return gpu_data
+
+    def get_gpu_usage(self):
+        gpus = GPUtil.getGPUs()
+        if not gpus:
+            return {"error": "No GPUs detected"}
+
+        main_gpu = max(gpus, key=lambda gpu: gpu.memoryTotal)
+
+        return {
+            "max_memory": main_gpu.memoryTotal,  # Convert from MB to bytes
+            "current_memory_usage": main_gpu.memoryUsed,  # Convert from MB to bytes
+            "temperature": main_gpu.temperature  # In Celsius
+        }

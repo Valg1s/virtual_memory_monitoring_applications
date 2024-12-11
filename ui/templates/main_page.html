@@ -96,6 +96,14 @@
                         <canvas id="virtualMemoryFreqChart" width="400" height="200"></canvas>
                     </div>
                 </div>
+
+                <div id="gpu_block" style="display: none">
+                    <h2>RAM Data</h2>
+                    <div class="cpu__charts" style="display: block!important ">
+                        <canvas id="gpuLoadChart" width="400" height="200"></canvas>
+                        <canvas id="gpuTempChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -204,6 +212,59 @@ const virtualMemoryFreqChart = new Chart(virtualMemoryFreqCtx, {
         scales: {
             x: { title: { display: true, text: 'Time' } },
             y: { min: 0, title: { display: true, text: 'Virtual Memory Load (GB)' } }
+        }
+    }
+});
+
+const gpuLoadCtx = document.getElementById('gpuLoadChart').getContext('2d');
+const gpuTempCtx = document.getElementById('gpuTempChart').getContext('2d');
+
+const gpuLoadChart = new Chart(gpuLoadCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'GPU Load (GB)',
+            data: [], // CPU load values
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: true,
+            tension: 0.4 // Smoother lines
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Time' } },
+            y: { min: 0, title: { display: true, text: 'Load (GB)' } }
+        }
+    }
+});
+
+const gpuTempChart = new Chart(gpuTempCtx, {
+    type: 'line',
+    data: {
+        labels: [], // Time labels
+        datasets: [{
+            label: 'GPU Temperature (Celsius)',
+            data: [], // CPU frequency values
+            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            x: { title: { display: true, text: 'Time' } },
+            y: { min: 0,max: 130, title: { display: true, text: 'GPU Temperature (Celsius)' } }
         }
     }
 });
