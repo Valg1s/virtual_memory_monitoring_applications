@@ -48,6 +48,7 @@ app.add_url_rule('/get_network_info', endpoint='pc_network_info', view_func=pc_i
 app.add_url_rule('/get_cpu_load', endpoint='cpu_load', view_func=cpu_info.get_cpu_load)
 app.add_url_rule('/get_memory_load', endpoint='memory_load', view_func=memory_info.get_memory_load)
 app.add_url_rule('/get_gpu_load', endpoint='gpu_load', view_func=gpu_info.get_gpu_load)
+app.add_url_rule('/get_virtual_memory', endpoint='virtual_memory', view_func=memory_info.get_virtual_memory_by_process)
 
 if __name__ == "__main__":
     app.run(debug=True, port=8080)

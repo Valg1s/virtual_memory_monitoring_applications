@@ -15,3 +15,7 @@ class MemoryView(BaseView):
         memory_load = self.manager.get_memory_load()
 
         return jsonify(memory_load)
+
+    def get_virtual_memory_by_process(self):
+        memory_load = self.manager.get_virtual_memory_of_processes()
+        return jsonify(memory_load)

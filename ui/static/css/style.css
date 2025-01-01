@@ -252,4 +252,64 @@ header{
         height: 300px; /* Or any specific height */
     }
 
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Popup Content */
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 70%;
+    max-height: 80%;
+    overflow-y: scroll;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: block!important;
+}
+
+/* Popup Close Button */
+.popup-close-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.popup-close-button:hover {
+    background-color: #ff1a1a;
+}
+
+/* Open Popup Button */
+.main__button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.main__button:hover {
+    background-color: #0056b3;
+}
+
+#handsontable-container {
+    width: 600px; /* Set a width */
+    height: 400px; /* Set a height */
+}
+
 

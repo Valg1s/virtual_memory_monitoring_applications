@@ -65,5 +65,7 @@ class ProcessInfoService(ServicesBase):
 
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
-        print(cpu_load)
+
         return process_dict
+
+

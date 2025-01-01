@@ -57,6 +57,9 @@ class MonitoringManager:
     def get_gpu_load(self):
         return self.gpu.get_gpu_usage()
 
+    def get_virtual_memory_of_processes(self):
+        return self.ram.get_virtual_memory_of_processes()
+
     def test(self):
         # print(self.get_cpu_info())
         # print(self.get_ram_info())
@@ -65,8 +68,10 @@ class MonitoringManager:
         # print(self.get_network_info())
         # print(self.get_process_info())
 
-        for _ in range(100):
-            print(self.cpu.get_cpu_load())
+        # for _ in range(100):
+        #     print(self.cpu.get_cpu_load())
+
+        print(self.get_virtual_memory_of_processes())
 
 if __name__ == '__main__':
     t = MonitoringManager()

@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 from functools import wraps
 from itertools import groupby
+from multiprocessing.dummy import Pool as ThreadPool
 
 import psutil
 
@@ -223,3 +224,25 @@ class RAMInfoService(ServicesBase):
             "max_virtual_memory": max_virtual_memory,
             "current_virtual_memory_usage": current_virtual_memory_usage
         }
+
+    def _get_virtual_memory_by_pid(self, pid):
+        try:
+            proc = psutil.Process(pid)
+            proc_virtual_memory = self._convert_size(proc.memory_info().vms)
+            return {
+                "PID": pid,
+                "Process Name": proc.name(),
+                "Virtual Memory Usage": proc_virtual_memory,
+            }
+        except psutil.NoSuchProcess:
+            return {"PID": pid,"Process Name":"None", "Virtual Memory Usage": "No process found"}
+        except Exception as e:
+            return {"PID": pid,"Process Name":"None","Virtual Memory Usage": f"Error: {e}"}
+
+    def get_virtual_memory_of_processes(self):
+        tasks = [proc.info["pid"] for proc in psutil.process_iter(["pid"])]
+
+        with ThreadPool(processes=24) as pool:
+            result = pool.map(self._get_virtual_memory_by_pid, tasks)
+
+        return result

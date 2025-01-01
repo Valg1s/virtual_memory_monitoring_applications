@@ -125,7 +125,9 @@ listItems.forEach(item => {
 const pc_info_button = document.getElementById('pc_info_button')
 
 pc_info_button.addEventListener("click", () => {
-   const blocks = document.querySelector(".main__datablock").querySelectorAll('div');
+   const blocks = document.querySelector(".main__datablock").querySelectorAll(':scope > div');
+
+   console.log(blocks.length)
     blocks.forEach(div => {
         div.style.display = "none";
     });
@@ -183,7 +185,13 @@ function updateGPUCharts(gpuMaxMemory, gpuCurrentUsage, gpuTemperature) {
 }
 
 document.getElementById('ram_info_button').addEventListener('click', () => {
-    document.querySelectorAll(".main__datablock div").forEach(div => div.style.display = "none");
+       const blocks = document.querySelector(".main__datablock").querySelectorAll(':scope > div');
+
+   console.log(blocks.length)
+    blocks.forEach(div => {
+        div.style.display = "none";
+    });
+    clearInterval(intervalId)
     const ramBlock = document.getElementById("ram_block");
     ramBlock.style.display = "block";
 
@@ -209,7 +217,14 @@ document.getElementById('ram_info_button').addEventListener('click', () => {
 
 // Fetch CPU info and manage interval
 document.getElementById('cpu_info_button').addEventListener('click', () => {
-    document.querySelectorAll(".main__datablock div").forEach(div => div.style.display = "none");
+       const blocks = document.querySelector(".main__datablock").querySelectorAll(':scope > div');
+
+   console.log(blocks.length)
+    blocks.forEach(div => {
+        div.style.display = "none";
+    });
+    clearInterval(intervalId)
+
     const cpuBlock = document.getElementById("cpu_block");
     cpuBlock.style.display = "block";
 
@@ -228,7 +243,13 @@ document.getElementById('cpu_info_button').addEventListener('click', () => {
 });
 
 document.getElementById('gpu_info_button').addEventListener('click', () => {
-    document.querySelectorAll(".main__datablock div").forEach(div => div.style.display = "none");
+       const blocks = document.querySelector(".main__datablock").querySelectorAll(':scope > div');
+
+   console.log(blocks.length)
+    blocks.forEach(div => {
+        div.style.display = "none";
+    });
+    clearInterval(intervalId)
     const cpuBlock = document.getElementById("gpu_block");
     cpuBlock.style.display = "block";
 
@@ -248,4 +269,33 @@ document.getElementById('gpu_info_button').addEventListener('click', () => {
                 console.error("Error fetching data:", error);
             });
     }, 1500);
+});
+
+const openPopupButton = document.getElementById('openPopupButton');
+const closePopupButton = document.getElementById('closePopupButton');
+const popupOverlay = document.getElementById('popupOverlay');
+
+let additionalInterval = null;
+
+// Event Listener: Open Popup
+openPopupButton.addEventListener('click', () => {
+    popupOverlay.style.display = 'flex';
+
+    additionalInterval = setInterval(() => {
+        axios.get(`${document.URL}get_virtual_memory`)
+            .then(response => {
+                const data = response.data;
+
+                hot.loadData(data);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+    }, 2000);
+});
+
+// Event Listener: Close Popup
+closePopupButton.addEventListener('click', () => {
+    popupOverlay.style.display = 'none';
+    clearInterval(additionalInterval);
 });
